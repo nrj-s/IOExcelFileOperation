@@ -5,9 +5,9 @@
 using namespace std;
 
 ExcelApplication::ExcelApplication(bool closeExcelOnExit)
-	: m_excelApplication(new QAxObject("Excel.Application", 0)), m_workBooks(NULL)
-	, m_workBook(NULL), m_workSheets(NULL), m_workSheet(NULL), m_usedRange(NULL)
-	, m_rows(NULL), m_cols(NULL), m_closeExcelOnExit(closeExcelOnExit)
+    : m_excelApplication(new QAxObject("Excel.Application", 0)), m_workBooks(NULL)
+    , m_workBook(NULL), m_workSheets(NULL), m_workSheet(NULL), m_usedRange(NULL)
+    , m_rows(NULL), m_cols(NULL), m_closeExcelOnExit(closeExcelOnExit)
 {
     if (m_excelApplication == NULL)
         throw invalid_argument("Failed to initialize interop with Excel (probably Excel is not installed)");
@@ -33,9 +33,9 @@ ExcelApplication::~ExcelApplication()
         }
     }
 	
-	delete m_cols;
-	delete m_rows;
-	delete m_usedRange;
+    delete m_cols;
+    delete m_rows;
+    delete m_usedRange;
     delete m_workSheet;
     delete m_workSheets;
     delete m_workBook;
@@ -45,13 +45,13 @@ ExcelApplication::~ExcelApplication()
 
 void ExcelApplication::Open(const QString& fileName)
 {
-	m_workBooks = m_excelApplication->querySubObject("Workbooks");
-	m_workBook = m_workBooks->querySubObject("Open(const QString&)", fileName);
-	m_workSheets = m_workBook->querySubObject("Worksheets");
-	m_workSheet = m_workBook->querySubObject("Worksheets(int)", 1);
-	m_usedRange = m_workSheet->querySubObject("UsedRange");
-	m_rows = m_usedRange->querySubObject("Rows");
-	m_cols = m_usedRange->querySubObject("Columns");
+    m_workBooks = m_excelApplication->querySubObject("Workbooks");
+    m_workBook = m_workBooks->querySubObject("Open(const QString&)", fileName);
+    m_workSheets = m_workBook->querySubObject("Worksheets");
+    m_workSheet = m_workBook->querySubObject("Worksheets(int)", 1);
+    m_usedRange = m_workSheet->querySubObject("UsedRange");
+    m_rows = m_usedRange->querySubObject("Rows");
+    m_cols = m_usedRange->querySubObject("Columns");
 }
 
 void ExcelApplication::New(const QString& fileName)
@@ -90,30 +90,30 @@ void ExcelApplication::SaveAs(const QString& fileName)
 
 void ExcelApplication::AddWorkSheet(const QString& sheetName)
 {
-	// set of sheets
-	QAxObject* sheets = m_workBook->querySubObject( "Worksheets" );
+    // set of sheets
+    QAxObject* sheets = m_workBook->querySubObject( "Worksheets" );
 
-	// Sheets number
-	int intCount = sheets->property("Count").toInt();
+    // Sheets number
+    int intCount = sheets->property("Count").toInt();
 
-	// Capture last sheet and add new sheet
-	QAxObject* lastSheet = sheets->querySubObject("Item(int)", intCount);
-	sheets->dynamicCall("Add(QVariant)", lastSheet->asVariant());
+    // Capture last sheet and add new sheet
+    QAxObject* lastSheet = sheets->querySubObject("Item(int)", intCount);
+    sheets->dynamicCall("Add(QVariant)", lastSheet->asVariant());
 
-	// Capture the new sheet and move to after last sheet
-	QAxObject* newSheet = sheets->querySubObject("Item(int)", intCount);
-	newSheet->setProperty("Name", sheetName);
-	lastSheet->dynamicCall("Move(QVariant)", newSheet->asVariant());
+    // Capture the new sheet and move to after last sheet
+    QAxObject* newSheet = sheets->querySubObject("Item(int)", intCount);
+    newSheet->setProperty("Name", sheetName);
+    lastSheet->dynamicCall("Move(QVariant)", newSheet->asVariant());
 }
 
 QVariant ExcelApplication::GetCellValue(int row, int col)
 {
-	QVariant value;
+    QVariant value;
     QAxObject *cell = m_workSheet->querySubObject("Cells(int,int)", row, col);
     value = cell->dynamicCall("Value()");
     delete cell;
 
-	return value;
+    return value;
 }
 
 void ExcelApplication::SetCellValue(int row, int col, const QString& value)
@@ -125,20 +125,20 @@ void ExcelApplication::SetCellValue(int row, int col, const QString& value)
 
 int ExcelApplication::GetRowStart()
 {
-	return m_usedRange->property("Row").toInt();
+    return m_usedRange->property("Row").toInt();
 }
 
 int ExcelApplication::GetColumnStart()
 {
-	return m_usedRange->property("Column").toInt();
+    return m_usedRange->property("Column").toInt();
 }
 
 int ExcelApplication::GetRowCount()
 {
-	return m_rows->property("Count").toInt();
+    return m_rows->property("Count").toInt();
 }
 
 int ExcelApplication::GetColumnCount()
 {
-	return m_cols->property("Count").toInt();
+    return m_cols->property("Count").toInt();
 }
