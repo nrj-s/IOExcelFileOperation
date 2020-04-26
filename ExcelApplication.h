@@ -35,8 +35,8 @@ private:
     QAxObject* m_workBook;
     QAxObject* m_workSheets;
     QAxObject* m_workSheet;
-	QAxObject* m_usedRange;
-	QAxObject* m_rows;
-	QAxObject* m_cols;
+    QAxObject* m_usedRange;
+    QAxObject* m_rows;
+    QAxObject* m_cols;
     bool m_closeExcelOnExit;
 };
